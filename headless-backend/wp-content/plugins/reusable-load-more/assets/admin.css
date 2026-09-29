@@ -1,0 +1,460 @@
+/* ============================================================
+   Reusable Load More — admin UI (refreshed)
+   ============================================================ */
+
+:root {
+    --rlm-accent: #2563eb;
+    --rlm-accent-soft: #eff4ff;
+    --rlm-border: #e4e7ec;
+    --rlm-text: #1f2937;
+    --rlm-muted: #6b7280;
+    --rlm-bg: #f8fafc;
+}
+
+/* .rlm-wrap { max-width: 1180px; } */
+
+/* ---- Header banner ---- */
+.rlm-header {
+    background: linear-gradient(120deg, #2563eb 0%, #4f46e5 100%);
+    color: #fff;
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin: 16px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, .18);
+}
+.rlm-header .rlm-logo {
+    width: 46px; height: 46px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.18);
+    border-radius: 12px;
+}
+.rlm-header .rlm-logo .dashicons { font-size: 26px; width: 26px; height: 26px; }
+.rlm-header h1 { color: #fff; font-size: 22px; margin: 0; padding: 0; }
+.rlm-header p { margin: 2px 0 0; opacity: .9; font-size: 13px; }
+
+/* ---- Tabs ---- */
+.rlm-tabs {
+    border: 0;
+    margin: 18px 0 0;
+    display: flex;
+    gap: 6px;
+}
+.rlm-tabs .nav-tab {
+    border: 1px solid var(--rlm-border);
+    background: #fff;
+    border-radius: 10px 10px 0 0;
+    margin: 0;
+    color: var(--rlm-muted);
+    font-weight: 600;
+    transition: all .15s;
+}
+.rlm-tabs .nav-tab:hover { color: var(--rlm-accent); }
+.rlm-tabs .nav-tab-active,
+.rlm-tabs .nav-tab-active:focus {
+    color: var(--rlm-accent);
+    border-bottom-color: #fff;
+    box-shadow: inset 0 3px 0 var(--rlm-accent);
+}
+
+.rlm-tab-panel {
+    background: #fff;
+    border: 1px solid var(--rlm-border);
+    border-radius: 0 12px 12px 12px;
+    padding: 22px 24px;
+    margin-top: -1px;
+}
+.rlm-tab-panel > .description { margin-top: 0; color: var(--rlm-muted); }
+
+/* ---- Section cards ---- */
+.rlm-instance {
+    background: #fff;
+    border: 1px solid var(--rlm-border);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: box-shadow .2s, border-color .2s;
+}
+.rlm-instance:hover { box-shadow: 0 4px 18px rgba(0,0,0,.06); }
+
+.rlm-instance-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--rlm-bg);
+    border-bottom: 1px solid var(--rlm-border);
+    cursor: pointer;
+}
+.rlm-instance.is-collapsed .rlm-instance-head { border-bottom-color: transparent; }
+.rlm-instance-title { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; }
+.rlm-chevron { transition: transform .2s; color: var(--rlm-muted); }
+.rlm-instance.is-collapsed .rlm-chevron { transform: rotate(-90deg); }
+.rlm-badge {
+    font-size: 11px; font-weight: 600;
+    background: var(--rlm-accent-soft); color: var(--rlm-accent);
+    padding: 2px 8px; border-radius: 20px;
+}
+.rlm-instance-head .rlm-toggle {
+    margin-left: auto; color: var(--rlm-muted); font-size: 12px;
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.rlm-remove {
+    color: #dc2626 !important; text-decoration: none; font-size: 12px;
+    display: inline-flex; align-items: center;
+}
+.rlm-remove:hover { color: #b91c1c !important; }
+
+.rlm-instance-body { padding: 18px; }
+.rlm-instance.is-collapsed .rlm-instance-body,
+.rlm-instance.is-collapsed .rlm-shortcode { display: none; }
+
+/* ---- Field grid ---- */
+.rlm-fieldset {
+    border: 1px solid var(--rlm-border);
+    border-radius: 10px;
+    padding: 14px 16px 4px;
+    margin-bottom: 14px;
+}
+.rlm-fieldset > legend {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .04em; color: var(--rlm-muted);
+    padding: 0 6px;
+}
+.rlm-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px 18px;
+}
+.rlm-field { margin: 0 0 10px; display: flex; flex-direction: column; }
+.rlm-field label { font-weight: 600; margin-bottom: 5px; font-size: 12px; color: var(--rlm-text); }
+.rlm-field input[type=text],
+.rlm-field input[type=number],
+.rlm-field select {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    box-shadow: none;
+    padding: 6px 10px;
+}
+.rlm-field input:focus, .rlm-field select:focus {
+    border-color: var(--rlm-accent);
+    box-shadow: 0 0 0 3px var(--rlm-accent-soft);
+    outline: none;
+}
+.rlm-field .rlm-hint { font-weight: 400; color: var(--rlm-muted); font-size: 11px; margin-left: 4px; }
+.rlm-span2 { grid-column: span 2; }
+.rlm-checks { grid-column: span 2; flex-direction: row; gap: 18px; align-items: center; }
+.rlm-checks label { font-weight: 500; }
+
+/* ---- Icon picker ---- */
+.rlm-icon-field { grid-column: span 2; }
+.rlm-icon-controls { display: flex; gap: 6px; align-items: center; }
+.rlm-icon-controls .rlm-icon-url { flex: 1; }
+.rlm-pick-icon { border-radius: 8px !important; }
+.rlm-clear-icon { color: #dc2626 !important; text-decoration: none; font-size: 18px; line-height: 1; }
+.rlm-icon-preview {
+    width: 44px; height: 44px; object-fit: contain;
+    margin-top: 8px; border: 1px solid var(--rlm-border);
+    border-radius: 8px; padding: 4px; background: #fff;
+}
+
+/* ---- Shortcode strip ---- */
+.rlm-shortcode {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 12px 18px;
+    background: var(--rlm-accent-soft);
+    border-top: 1px solid var(--rlm-border);
+    font-size: 12px;
+}
+.rlm-shortcode code { background: #fff; padding: 4px 10px; border-radius: 6px; border: 1px solid #dbe3f4; }
+.rlm-copy { border-radius: 8px !important; }
+.rlm-helper-note { color: var(--rlm-muted); }
+
+/* ---- Add button ---- */
+#rlm-add {
+    border: 1px dashed var(--rlm-accent) !important;
+    color: var(--rlm-accent) !important;
+    background: var(--rlm-accent-soft) !important;
+    border-radius: 10px !important;
+    padding: 10px 18px !important;
+    height: auto !important;
+    font-weight: 600;
+}
+#rlm-add:hover { background: #e0e9ff !important; }
+
+/* ---- Field documentation: hidden source, shown in a popover ---- */
+.rlm-desc { display: none; }
+
+/* The little (i) button injected into each field label */
+.rlm-info {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    margin-left: 5px;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    color: #a7aaad;
+    vertical-align: -3px;
+    border-radius: 50%;
+    transition: color .15s, background .15s;
+}
+.rlm-info:hover, .rlm-info[aria-expanded="true"] {
+    color: var(--rlm-accent);
+    background: var(--rlm-accent-soft);
+}
+.rlm-info:focus-visible { outline: 2px solid var(--rlm-accent); outline-offset: 1px; }
+.rlm-info .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+}
+/* Checkbox rows: the icon sits after the checkbox text */
+.rlm-checks .rlm-info { margin-left: 4px; }
+
+/* The popover itself — lives on <body>, so nothing can clip it */
+.rlm-pop {
+    display: none;
+    position: fixed;
+    z-index: 100100;
+    width: 340px;
+    max-width: calc(100vw - 24px);
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 14px 32px 14px 16px;
+    background: #fff;
+    border: 1px solid var(--rlm-border);
+    border-radius: 10px;
+    box-shadow: 0 8px 28px rgba(0,0,0,.16);
+    font-size: 12px;
+    line-height: 1.65;
+    color: var(--rlm-text);
+}
+.rlm-pop.is-open { display: block; }
+.rlm-pop strong { color: #1d2327; }
+.rlm-pop code {
+    font-size: 11px;
+    padding: 1px 5px;
+    background: var(--rlm-bg);
+    border: 1px solid var(--rlm-border);
+    border-radius: 4px;
+    word-break: break-word;
+}
+.rlm-pop-x {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    border: 0;
+    background: none;
+    font-size: 18px;
+    line-height: 1;
+    color: var(--rlm-muted);
+    cursor: pointer;
+    padding: 2px 4px;
+}
+.rlm-pop-x:hover { color: #d63638; }
+
+/* Small pills used inside the popover text */
+.rlm-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    margin-right: 6px;
+    vertical-align: 1px;
+}
+.rlm-tag-selector { background: #fff4e5; color: #8a5300; }
+.rlm-tag-req { background: #fde8e8; color: #a10f0f; }
+
+/* Mode banner at the top of Identity & Targeting */
+.rlm-mode-banner {
+    margin: 0 0 14px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.6;
+    border: 1px solid var(--rlm-border);
+    background: var(--rlm-bg);
+}
+.rlm-mode-posts { border-left: 4px solid #2271b1; }
+.rlm-mode-selector { border-left: 4px solid #dba617; }
+
+/* ---- Help ---- */
+.rlm-help pre {
+    background: var(--rlm-bg); padding: 14px; border-radius: 8px;
+    white-space: pre-wrap; max-width: 760px; border: 1px solid var(--rlm-border);
+}
+.rlm-help h3 { margin-top: 28px; }
+.rlm-help ul { list-style: disc; margin-left: 22px; }
+.rlm-help ul li { margin-bottom: 8px; }
+.rlm-help-table {
+    max-width: 1000px;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+.rlm-help-table td {
+    padding: 10px 14px;
+    vertical-align: top;
+    border: 1px solid var(--rlm-border);
+}
+.rlm-help-table td:first-child {
+    width: 220px;
+    white-space: nowrap;
+    background: var(--rlm-bg);
+}
+
+@media (max-width: 900px) {
+    .rlm-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .rlm-span2, .rlm-checks, .rlm-icon-field { grid-column: span 2; }
+}
+
+/* Per-section save bar */
+.rlm-section-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    border-top: 1px solid var(--rlm-border);
+    background: #fff;
+}
+.rlm-instance.is-collapsed .rlm-section-actions { display: none; }
+.rlm-save-status { font-size: 12px; color: var(--rlm-muted); }
+.rlm-save-status.is-ok    { color: #15803d; font-weight: 600; }
+.rlm-save-status.is-error { color: #dc2626; font-weight: 600; }
+
+/* Sections toolbar (top save) */
+.rlm-sections-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+/* Sticky "Save All Sections" on the right of the Sections tab */
+.rlm-save-all-sticky {
+    position: sticky;
+    top: 40px;              /* below the WP admin bar */
+    float: right;
+    z-index: 20;
+    margin-top: -52px;      /* pull up beside the intro line */
+}
+@media (max-width: 782px) {
+    .rlm-save-all-sticky { position: static; float: none; margin-top: 10px; display: inline-block; }
+}
+
+/* Make sure the per-section save bar AND shortcode strip hide when collapsed */
+.rlm-instance.is-collapsed .rlm-section-actions,
+.rlm-instance.is-collapsed .rlm-shortcode { display: none !important; }
+
+/* More visible save status */
+.rlm-save-status { font-size: 13px; font-weight: 600; }
+.rlm-save-status:empty { display: none; }
+
+/* ---- "Post type does not exist" inline warning ---- */
+.rlm-pt-warning {
+    display: block;
+    margin-top: 6px;
+    padding: 8px 10px;
+    border: 1px solid #dba617;
+    border-left-width: 4px;
+    border-radius: 6px;
+    background: #fcf9e8;
+    font-size: 12px;
+    line-height: 1.55;
+    color: #674e00;
+}
+.rlm-pt-warning code {
+    font-size: 11px;
+    padding: 1px 5px;
+    background: #fff;
+    border: 1px solid #e6d9a8;
+    border-radius: 4px;
+}
+
+/* ---- Rename / duplicate modal ---- */
+.rlm-modal-back {
+    position: fixed;
+    inset: 0;
+    z-index: 100200;
+    background: rgba(0, 0, 0, .45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.rlm-modal {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .25);
+    padding: 24px;
+    width: 520px;
+    max-width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: center;
+}
+.rlm-modal h2 { margin: 0 0 8px; font-size: 18px; }
+.rlm-modal p { margin: 0 0 18px; font-size: 13px; line-height: 1.6; color: var(--rlm-muted); }
+.rlm-modal code {
+    font-size: 12px;
+    padding: 1px 6px;
+    background: var(--rlm-bg);
+    border: 1px solid var(--rlm-border);
+    border-radius: 4px;
+}
+.rlm-modal-opts {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.rlm-modal-opts .button {
+    display: block;
+    width: 100%;
+    height: auto !important;
+    padding: 12px 16px !important;
+    text-align: left;
+    white-space: normal;
+    line-height: 1.4;
+    font-weight: 600;
+    border-radius: 8px !important;
+}
+.rlm-modal-opts .button small {
+    display: block;
+    margin-top: 4px;
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 1.5;
+    opacity: .85;
+}
+.rlm-modal-opts .button-primary small { color: #e8eefc; }
+.rlm-modal-cancel { color: var(--rlm-muted); text-decoration: none; }
+.rlm-modal-cancel:hover { color: #d63638; }
+
+/* ---- Shortcode bar states ---- */
+.rlm-sc-placeholder,
+.rlm-sc-unsaved { display: none; font-size: 12px; }
+.rlm-sc-placeholder { color: var(--rlm-muted); font-style: italic; }
+.rlm-sc-unsaved { color: #8a5300; }
+
+/* No ID yet: hide the (meaningless) shortcode and prompt for one. */
+.rlm-shortcode.is-empty .rlm-sc-text,
+.rlm-shortcode.is-empty .rlm-copy,
+.rlm-shortcode.is-empty .rlm-helper-note { display: none; }
+.rlm-shortcode.is-empty .rlm-sc-placeholder { display: inline; }
+
+/* ID typed but not saved under that slug yet. */
+.rlm-shortcode.is-unsaved .rlm-sc-unsaved { display: inline; }
+.rlm-shortcode.is-unsaved .rlm-sc-text { opacity: .6; }

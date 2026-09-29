@@ -1,0 +1,75 @@
+/* ACF Component Builder — admin UI */
+.acb-wrap { max-width: 1100px; }
+.acb-title { display: flex; align-items: center; gap: .4rem; }
+.acb-title .dashicons { font-size: 28px; width: 28px; height: 28px; }
+
+.acb-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin: 20px 0; }
+.acb-card { background: #fff; border: 1px solid #dcdcde; border-radius: 10px; padding: 20px; text-align: center; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+.acb-card__num { font-size: 34px; font-weight: 700; line-height: 1; color: #2271b1; }
+.acb-card__label { margin-top: 6px; color: #646970; font-size: 13px; }
+
+.acb-panel { background: #fff; border: 1px solid #dcdcde; border-radius: 10px; padding: 20px; margin: 20px 0; }
+.acb-panel h2 { margin-top: 0; }
+
+.acb-status { border-collapse: collapse; }
+.acb-status td { padding: 6px 24px 6px 0; }
+.acb-ok { color: #007017; font-weight: 600; }
+.acb-bad { color: #b32d2e; font-weight: 600; }
+
+.acb-list { margin: 0; }
+.acb-list li { padding: 6px 0; border-bottom: 1px solid #f0f0f1; }
+
+.acb-badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: #e5efff; color: #2271b1; text-transform: uppercase; letter-spacing: .02em; }
+.acb-badge--layout { background: #eefbf0; color: #007017; }
+.acb-badge--flexible_content { background: #fff4e5; color: #8a5000; }
+.acb-badge--repeater { background: #f3e8ff; color: #6b21a8; }
+
+.acb-table code, .acb-list code { background: #f6f7f7; padding: 1px 6px; border-radius: 4px; }
+.acb-empty { padding: 40px; text-align: center; color: #646970; border: 2px dashed #dcdcde; border-radius: 10px; }
+.acb-flex-detect { border-left: 3px solid #2271b1; padding-left: 14px; margin: 16px 0; }
+
+/* ---- Help tooltips, copy buttons, usage cards (Phase 4 usability) ---- */
+
+.acb-help {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px; margin-left: 6px; padding: 0;
+    border: 0; border-radius: 50%; background: #dcdcde; color: #1d2327;
+    font-size: 11px; line-height: 1; cursor: help; vertical-align: middle;
+}
+.acb-help:hover, .acb-help:focus { background: #2271b1; color: #fff; outline: none; }
+.acb-help .dashicons { font-size: 13px; width: 13px; height: 13px; }
+
+.acb-tip-bubble {
+    position: absolute; z-index: 100001; max-width: 280px;
+    background: #1d2327; color: #fff; padding: 8px 10px; border-radius: 6px;
+    font-size: 12px; line-height: 1.45; box-shadow: 0 6px 20px rgba(0,0,0,.25);
+    pointer-events: none;
+}
+.acb-tip-bubble[hidden] { display: none; }
+
+/* Copy buttons */
+.acb-copy {
+    display: inline-flex; align-items: center; gap: 4px;
+    border: 1px solid #c3c4c7; background: #f6f7f7; color: #2c3338;
+    border-radius: 5px; padding: 2px 8px; font-size: 12px; cursor: pointer;
+}
+.acb-copy:hover { background: #fff; border-color: #2271b1; color: #2271b1; }
+.acb-copy.is-copied { background: #c6f6d5; border-color: #00a32a; color: #00450e; }
+
+/* Usage card (how to display a component) */
+.acb-usage { display: grid; gap: 12px; }
+.acb-usage-row { border: 1px solid #e2e4e7; border-radius: 8px; padding: 12px 14px; }
+.acb-usage-row h4 { margin: 0 0 6px; font-size: 13px; }
+.acb-usage-row p { margin: 0 0 8px; color: #646970; font-size: 12px; }
+.acb-usage-code { display: flex; align-items: center; gap: 8px; }
+.acb-usage-code code {
+    flex: 1; background: #f6f7f7; border: 1px solid #e2e4e7; border-radius: 5px;
+    padding: 6px 8px; font-size: 12px; overflow-x: auto; white-space: nowrap;
+}
+
+/* Dashboard "how it works" */
+.acb-howitworks .acb-steps { list-style: none; margin: 12px 0; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(3, 1fr); }
+.acb-howitworks .acb-steps li { border: 1px solid #e2e4e7; border-radius: 8px; padding: 12px 14px; background: #fbfbfc; font-size: 13px; line-height: 1.5; }
+@media (max-width: 860px) { .acb-howitworks .acb-steps { grid-template-columns: 1fr; } }
+.acb-howitworks .acb-hint { margin: 6px 0 0; }
+.acb-usage-drawer td { background: #fbfbfc; }

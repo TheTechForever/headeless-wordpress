@@ -1,0 +1,26 @@
+/* Dev Toolkit — front-end styles */
+
+/* Fixed mobile phone bar */
+.dt-mobile-phone{
+	display:none;
+	position:fixed;
+	left:0;right:0;bottom:0;
+	z-index:9999;
+	align-items:center;
+	justify-content:center;
+	gap:8px;
+	padding:12px 16px;
+	background:#0a7d76;
+	color:#fff;
+	text-decoration:none;
+	font-weight:600;
+	box-shadow:0 -2px 10px rgba(0,0,0,.15);
+}
+.dt-mobile-phone__icon{font-size:18px;line-height:1}
+@media (max-width:767px){
+	.dt-mobile-phone{display:flex}
+	body{padding-bottom:52px} /* keep footer content clear of the bar */
+}
+
+/* Social list default reset */
+ul.dt-social{list-style:none;display:flex;gap:12px;margin:0;padding:0}

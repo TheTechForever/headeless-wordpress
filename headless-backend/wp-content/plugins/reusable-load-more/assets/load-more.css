@@ -1,0 +1,33 @@
+/* Reusable Load More — front-end helper classes. */
+
+.lm-item-hidden { display: none !important; }
+.lm-btn-hidden  { display: none !important; }
+
+/* Button alignment wrappers */
+.load-more-wrap { display: flex; }
+.load-more-wrap.lm-align-left   { justify-content: flex-start; }
+.load-more-wrap.lm-align-center { justify-content: center; }
+.load-more-wrap.lm-align-right  { justify-content: flex-end; }
+
+/* Button icon */
+.js-load-more { display: inline-flex; align-items: center; gap: 8px; margin-top: 20px; }
+.js-load-more .lm-btn-icon { width: 18px; height: 18px; object-fit: contain; pointer-events: none; }
+
+/* Built-in "Default WordPress layout" card (only used when the active theme
+   ships no content template part). Deliberately light so it inherits the
+   theme's fonts/colours; override in Style > Custom CSS if desired. */
+.rlm-default-card { display: flex; flex-direction: column; height: 100%; }
+.rlm-default-thumb { display: block; margin-bottom: 12px; }
+.rlm-default-thumb img { width: 100%; height: auto; display: block; border-radius: 8px; }
+.rlm-default-title { margin: 0 0 6px; font-size: 1.15em; line-height: 1.3; }
+.rlm-default-title a { text-decoration: none; }
+.rlm-default-meta { font-size: 0.85em; opacity: 0.7; margin-bottom: 10px; }
+.rlm-default-meta .rlm-default-sep { margin: 0 4px; }
+.rlm-default-excerpt { margin: 0 0 12px; }
+.rlm-default-more { font-weight: 600; text-decoration: none; margin-top: auto; }
+
+/* Auto-grid mode: each item is a grid cell, so stretch the card to fill it.
+   Keeps card bottoms aligned without any framework CSS. */
+.rlm-posts-wrap > .rlm-post-item { min-width: 0; }
+.rlm-posts-wrap > .rlm-post-item > .rlm-default-card { height: 100%; }
+.rlm-default-card > .rlm-default-body { display: flex; flex-direction: column; flex: 1 1 auto; }

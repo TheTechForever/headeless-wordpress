@@ -1,0 +1,32 @@
+# Copyright (C) 2026 ACF Component Builder
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: ACF Component Builder 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: \n"
+"X-Domain: acf-component-builder\n"
+
+msgid "ACF Component Builder"
+msgstr ""
+
+msgid "ACF Components"
+msgstr ""
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Components"
+msgstr ""
+
+msgid "Import ACF JSON"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "ACF Component Builder requires Advanced Custom Fields PRO."
+msgstr ""

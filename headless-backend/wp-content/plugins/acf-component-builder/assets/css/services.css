@@ -1,0 +1,7 @@
+/* Optional styling for the Services Inner Detail component.
+   Enqueue from your theme, or @import into your stylesheet. */
+.services-inner-detail { padding: 60px 0; }
+.services-inner-detail.has-bg { background: #f6f8fb; }
+.services-title { margin-bottom: 1rem; }
+.services-item-title { margin-top: 1.25rem; }
+.services-image { border-radius: 12px; }

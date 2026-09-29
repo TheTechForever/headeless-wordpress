@@ -1279,10 +1279,11 @@ function _acf_query_remove_post_type( $sql ) {
  *
  * @since   ACF 5.0.0
  *
- * @param   $args (array)
- * @return  (array)
+ * @param array $args                     The query arguments.
+ * @param bool  $enforce_read_permissions Whether to exclude posts the current user cannot read.
+ * @return array
  */
-function acf_get_grouped_posts( $args ) {
+function acf_get_grouped_posts( $args, $enforce_read_permissions = false ) {
 
 	// vars
 	$data = array();
@@ -1301,6 +1302,49 @@ function acf_get_grouped_posts( $args ) {
 			'update_post_meta_cache' => false,
 		)
 	);
+
+	// Restrict unauthenticated queries before pagination to avoid non-public posts occupying result pages.
+	if ( $enforce_read_permissions && ! is_user_logged_in() ) {
+		$post_types = acf_get_array( $args['post_type'] );
+
+		if ( in_array( 'any', $post_types, true ) ) {
+			$post_types = get_post_types();
+		}
+
+		$post_types = array_values( array_filter( $post_types, 'is_post_type_viewable' ) );
+
+		if ( empty( $post_types ) ) {
+			return $data;
+		}
+
+		$post_statuses        = acf_get_array( $args['post_status'] );
+		$public_post_statuses = array_values( array_filter( get_post_stati(), 'is_post_status_viewable' ) );
+
+		if ( empty( $post_statuses ) ) {
+			return $data;
+		}
+
+		if ( in_array( 'any', $post_statuses, true ) ) {
+			$post_statuses = $public_post_statuses;
+
+			if ( in_array( 'attachment', $post_types, true ) ) {
+				$post_statuses[] = 'inherit';
+			}
+		} else {
+			$post_statuses = array_values( array_intersect( $post_statuses, $public_post_statuses ) );
+
+			if ( in_array( 'attachment', $post_types, true ) && in_array( 'inherit', acf_get_array( $args['post_status'] ), true ) ) {
+				$post_statuses[] = 'inherit';
+			}
+		}
+
+		if ( empty( $post_statuses ) ) {
+			return $data;
+		}
+
+		$args['post_type']   = $post_types;
+		$args['post_status'] = array_values( array_unique( $post_statuses ) );
+	}
 
 	// find array of post_type
 	$post_types          = acf_get_array( $args['post_type'] );
@@ -1394,6 +1438,19 @@ function acf_get_grouped_posts( $args ) {
 			if ( count( $ordered_posts ) == count( $all_posts ) ) {
 				$this_posts = array_slice( $ordered_posts, $offset, $length );
 			}
+		}
+
+		if ( $enforce_read_permissions ) {
+			$this_posts = array_filter(
+				$this_posts,
+				function ( $post ) {
+					return is_post_publicly_viewable( $post ) || current_user_can( 'read_post', $post->ID );
+				}
+			);
+		}
+
+		if ( empty( $this_posts ) ) {
+			continue;
 		}
 
 		// populate $this_posts
@@ -2444,6 +2501,27 @@ function acf_upload_file( $uploaded_file ) {
 	$type     = $file['type'];
 	$file     = $file['file'];
 	$filename = basename( $file );
+
+	/*
+	 * WordPress derives the file type from the extension, and validates that guess against
+	 * the file's contents only for images. A PostScript program renamed with a `.pdf`
+	 * extension therefore reaches Ghostscript, which runs it as a program.
+	 *
+	 * Ghostscript skips leading bytes up to and including a space, then searches the next
+	 * 1023 bytes for the `%PDF-` marker. Finding the marker is not enough on its own: when
+	 * `%!PS` appears before it, Ghostscript uses its PostScript interpreter instead.
+	 * Requiring the marker at the start of the file is stricter than that rule, so nothing
+	 * accepted here can reach the PostScript interpreter. Delete rejected files rather than
+	 * leaving them for a later metadata job to process.
+	 */
+	if ( 'application/pdf' === $type ) {
+		$head = file_get_contents( $file, false, null, 0, 1024 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading local bytes, not a remote request.
+
+		if ( false === $head || 0 !== strpos( ltrim( $head, "\x00..\x20" ), '%PDF-' ) ) {
+			wp_delete_file( $file );
+			return __( 'Sorry, this file could not be uploaded.', 'secure-custom-fields' );
+		}
+	}
 
 	// Construct the object array
 	$object = array(
@@ -3799,27 +3877,32 @@ function acf_connect_attachment_to_post( $attachment_id = 0, $post_id = 0 ) {
  *
  * @since   ACF 5.5.8
  *
- * @param   $data (string)
- * @return  (string)
+ * @param string $data The data to encrypt.
+ * @return string|false Encrypted string, or false when OpenSSL is unavailable.
  */
 function acf_encrypt( $data = '' ) {
 
-	// bail early if no encrypt function
+	// Require OpenSSL: without it we cannot authenticate the payload, so fail closed.
 	if ( ! function_exists( 'openssl_encrypt' ) ) {
-		return base64_encode( $data );
+		return false;
 	}
 
-	// generate a key
-	$key = wp_hash( 'acf_encrypt' );
+	$key     = wp_hash( 'acf_encrypt' );
+	$mac_key = wp_hash( 'acf_encrypt_mac' );
 
-	// Generate an initialization vector
+	// Generate an initialization vector.
 	$iv = openssl_random_pseudo_bytes( openssl_cipher_iv_length( 'aes-256-cbc' ) );
 
 	// Encrypt the data using AES 256 encryption in CBC mode using our encryption key and initialization vector.
 	$encrypted_data = openssl_encrypt( $data, 'aes-256-cbc', $key, 0, $iv );
 
 	// The $iv is just as important as the key for decrypting, so save it with our encrypted data using a unique separator (::)
-	return base64_encode( $encrypted_data . '::' . $iv );
+	$payload = $encrypted_data . '::' . $iv;
+
+	// Authenticate the payload with an HMAC so tampering is detected on decrypt.
+	$hmac = hash_hmac( 'sha256', $payload, $mac_key, true );
+
+	return base64_encode( $payload . $hmac ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Encoding our own authenticated payload.
 }
 
 /**
@@ -3829,18 +3912,38 @@ function acf_encrypt( $data = '' ) {
  * @since   ACF 5.5.8
  *
  * @param string $data The string to decrypt.
- * @return string|false Decrypted string, or false if the payload is malformed or decryption fails.
+ * @return string|false Decrypted string, or false if the payload is malformed, unauthenticated, or decryption fails.
  */
 function acf_decrypt( $data = '' ) {
-	// bail early if no decrypt function
+
+	// Require OpenSSL: without it the payload cannot be authenticated, so fail closed.
 	if ( ! function_exists( 'openssl_decrypt' ) ) {
-		return base64_decode( (string) $data ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decoding our own encrypted payload.
+		return false;
 	}
 
-	// Treat malformed input as a decrypt failure: list() destructuring below would
-	// otherwise warn on PHP 8 when the payload isn't the "base64(data::iv)" shape.
 	$raw = base64_decode( (string) $data, true ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decoding our own encrypted payload.
-	if ( false === $raw || strpos( $raw, '::' ) === false ) {
+	if ( false === $raw ) {
+		return false;
+	}
+
+	// The trailing 32 bytes carry the HMAC; anything shorter cannot be our payload.
+	if ( strlen( $raw ) <= 32 ) {
+		return false;
+	}
+
+	$mac_key = wp_hash( 'acf_encrypt_mac' );
+	$hmac    = substr( $raw, -32 );
+	$payload = substr( $raw, 0, -32 );
+
+	// Verify the HMAC before touching the ciphertext.
+	$expected = hash_hmac( 'sha256', $payload, $mac_key, true );
+	if ( ! hash_equals( $expected, $hmac ) ) {
+		return false;
+	}
+
+	// Treat a malformed payload as a decrypt failure: the list() destructuring below
+	// would otherwise warn on PHP 8 when the payload isn't the "data::iv" shape.
+	if ( strpos( $payload, '::' ) === false ) {
 		return false;
 	}
 
@@ -3848,7 +3951,7 @@ function acf_decrypt( $data = '' ) {
 	$key = wp_hash( 'acf_encrypt' );
 
 	// To decrypt, split the encrypted data from our IV - our unique separator used was "::"
-	list( $encrypted_data, $iv ) = explode( '::', $raw, 2 );
+	list( $encrypted_data, $iv ) = explode( '::', $payload, 2 );
 
 	// decrypt
 	return openssl_decrypt( $encrypted_data, 'aes-256-cbc', $key, 0, $iv );

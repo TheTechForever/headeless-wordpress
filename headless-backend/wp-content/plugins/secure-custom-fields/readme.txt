@@ -4,7 +4,7 @@ Tags: fields, custom fields, meta, scf
 Requires at least: 6.2
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 6.9.0
+Stable tag: 6.9.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,48 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.9.5 =
+*Release Date 7th August 2026*
+
+*Security*
+
+- REST updates now reject bidirectional field writes when the current user cannot edit an inverse target.
+- Gallery AJAX responses no longer render attachments the current user cannot read, and empty responses now close the attachment sidebar.
+- PDF files uploaded through File and Image fields must start with a valid PDF header. Rejected files are removed from the uploads directory.
+- The internal `acf_encrypt()` and `acf_decrypt()` helpers now authenticate encrypted values with an HMAC and require the OpenSSL extension instead of falling back to unauthenticated base64 encoding. Anonymous inline `acf_form()` submissions now require OpenSSL on the server.
+
+= 6.9.4 =
+*Release Date 3rd August 2026*
+
+*Security*
+
+- Front-end `acf_form()` submissions are now limited to the save target, form settings, and fields that the rendered form exposed. Submissions carrying missing, altered, or expired form data are rejected before validation or saving.
+- The `acf/form/allowed_field_keys` filter now applies while a form renders rather than on submit. Keys added through it are still accepted on save, so forms extended at runtime keep working.
+
+= 6.9.3 =
+*Release Date 28th July 2026*
+
+*Hardening*
+
+- Restricted Local JSON writes for multisite users who are not super admins to save paths inside the current site's uploads directory.
+- Limited Options Page saves to values for fields assigned to the current page.
+- Excluded posts the current user cannot read from Post Object, Page Link, and Relationship field queries.
+- Block render templates are now always resolved from the registered block path, and template paths using stream wrappers are rejected.
+- Reduced User field values in REST API responses to user IDs, including within Group, Clone, Repeater, and Flexible Content fields.
+
+= 6.9.2 =
+*Release Date 21st July 2026*
+
+*Fixes*
+
+- Fixed Google Maps field values being double-encoded when saved inside a block.
+- Inserting a Link field value in the Classic Editor no longer triggers validation for other required fields before the post is saved.
+- Auto Inline Editing blocks no longer return truthy placeholder strings for empty field values fetched from a different post inside the block render template.
+- V2 and V3 blocks no longer crash when rendering an oEmbed field whose title begins with `[` or `{`.
+- Field group location rules without a location value no longer cause PHP warnings on page load.
+- Improved the appearance of the URL, Number, and Select fields on WordPress 7.0+.
+- Fields now save on WooCommerce orders when using HPOS in compatibility mode.
+
 = 6.9.1 =
 *Release Date 2nd July 2026*
 
@@ -394,6 +436,12 @@ Revert from 6.5.2.
 * Security - SCF defined Post Type and Taxonomy metabox callbacks no longer have access to $_POST data. (Thanks to the Automattic Security Team for the disclosure)
 
 == Upgrade Notice ==
+
+= 6.9.5 =
+Security: Anonymous inline forms now require OpenSSL.
+
+= 6.9.4 =
+Security: front-end form submissions are now bound to the rendered form. Purge page caches after updating so visitors are served freshly rendered forms.
 
 = 6.4.2 =
 Security: improves validation of an URL in an admin field.
